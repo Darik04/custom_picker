@@ -4,12 +4,12 @@ Custom picker module
 
 ## Getting Started
 
-dependecies:__
-    ...__
-    ...__
-    photo_manager: ^2.6.0 or other version__
-    image_picker: ^0.8.7 or other version__
-    camera: ^0.10.5+2 or other version__
+dependecies: <br />
+    ... <br />
+    ... <br />
+    photo_manager: ^2.6.0 or other version <br />
+    image_picker: ^0.8.7 or other version <br />
+    camera: ^0.10.5+2 or other version <br />
 
 
 ### PATH 
