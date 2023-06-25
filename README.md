@@ -1,16 +1,43 @@
-# custom_picker
+# CUSTOM PICKER
 
-A new Flutter project.
+Custom picker module
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+dependecies:
+    ...
+    ...
+    photo_manager: ^2.6.0 or other version
+    image_picker: ^0.8.7 or other version
+    camera: ^0.10.5+2 or other version
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# PATH 
+-> lib>custom_picker(folder)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Usage
+
+# Method is:
+customPicker(
+  BuildContext context, 
+  {
+    required Function(Uint8List photo) onPhotoChoosen,
+    required Function() onCancel,
+    required Function() onDelete,
+  }
+)
+
+
+
+customPicker(
+    context,
+    onPhotoChoosen: (photo){
+        print('photo choosen');
+    },
+    onCancel: (){
+        print('cancel');
+    },
+    onDelete: (){
+        print('delete');
+    }
+);
