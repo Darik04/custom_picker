@@ -18,6 +18,7 @@ dependecies: <br />
 ## Usage
 
 ### Method is:
+```dart
 customPicker(
   BuildContext context, 
   {
@@ -26,9 +27,11 @@ customPicker(
     required Function() onDelete,
   }
 )
+```
 
 
-
+```dart
+//using
 customPicker(
     context,
     onPhotoChoosen: (photo){
@@ -41,3 +44,4 @@ customPicker(
         print('delete');
     }
 );
+```
