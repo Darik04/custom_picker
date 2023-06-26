@@ -52,8 +52,11 @@ class _CustomPickerWidgetState extends State<CustomPickerWidget> {
   }
 
   void openGallery() async {
-    Uint8List? cropped = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AlbumsView(
+    if(customPicker.albums.isEmpty) return;
+    Uint8List? cropped = await Navigator.push(context, CupertinoPageRoute(builder: (context) => MediaView(
+      album: customPicker.albums.first,
       onCancel: _onCancel,
+      isFromMain: true,
     )));
     if(cropped != null){
       widget.onPhotoChoosen(cropped);
@@ -62,22 +65,7 @@ class _CustomPickerWidgetState extends State<CustomPickerWidget> {
   }
 
 
-  void tapByCamera() async{
-    XFile? file = await ImagePicker().pickImage(source: ImageSource.camera);
-    if(file != null){
-      Uint8List bytesFile = await file.readAsBytes();
-      // ignore: use_build_context_synchronously
-      Uint8List? cropped = await Navigator.push(context, CupertinoPageRoute(builder: (context) 
-        => CropperView(
-          image: bytesFile, 
-          onCancel: _onCancel,
-        )));
-      if(cropped != null){
-        widget.onPhotoChoosen(cropped);
-        Navigator.pop(context);
-      }
-    }
-  }
+  
 
   toCropView(Uint8List file) async{
     Uint8List? cropped = await Navigator.push(context, CupertinoPageRoute(builder: (context) 
@@ -114,7 +102,17 @@ class _CustomPickerWidgetState extends State<CustomPickerWidget> {
                     itemBuilder: (_, idx) 
                       => idx == 0
                       ? CameraCard(
-                        onTap: tapByCamera,
+                        onPhoto: (bytesFile) async {
+                          Uint8List? cropped = await Navigator.push(context, CupertinoPageRoute(builder: (context) 
+                            => CropperView(
+                              image: bytesFile, 
+                              onCancel: _onCancel,
+                            )));
+                          if(cropped != null){
+                            widget.onPhotoChoosen(cropped);
+                            Navigator.pop(context);
+                          }
+                        },
                       )
                       : GestureDetector(
                         onTap: () => toCropView(customPicker.recentMediaFilesUINT[idx - 1]),

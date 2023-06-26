@@ -34,18 +34,18 @@ class _CropperViewState extends State<CropperView> {
     cancelModal(
       context, 
       cancelChanges: (){
-        setState(() {
-          _imageToCrop = null;
-        });
-        Future.delayed(Duration(milliseconds: 600), (){
-          setState(() {
-            _imageToCrop = widget.image;
-          });
-        });
-      }, 
-      cancel: (){
         Navigator.pop(context);
         widget.onCancel();
+      }, 
+      cancel: (){
+        // setState(() {
+        //   _imageToCrop = null;
+        // });
+        // Future.delayed(Duration(milliseconds: 1200), (){
+        //   setState(() {
+        //     _imageToCrop = widget.image;
+        //   });
+        // });
       }
     );
   }
@@ -66,17 +66,21 @@ class _CropperViewState extends State<CropperView> {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
+          Container(
+            color: ColorStyles.black2,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: _imageToCrop == null
-            ? SizedBox.shrink()
+            ? Center(
+              child: CircularProgressIndicator(),
+            )
             : Cropper(
               aspectRatio: MediaQuery.of(context).size.width/MediaQuery.of(context).size.height,
               cropperKey: _cropperKey,
               overlayType: OverlayType.circle,
+              backgroundColor: ColorStyles.black2,
               overlayColor: ColorStyles.black2.withOpacity(0.5),
-              zoomScale: 4,
+              zoomScale: 2,
               image: Image.memory(_imageToCrop!),
             )
           ),

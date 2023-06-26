@@ -1,6 +1,9 @@
 import 'package:custom_picker/constants/colors/color_styles.dart';
 import 'package:custom_picker/constants/texts/text_styles.dart';
 import 'package:custom_picker/custom_picker/custom_picker.dart';
+import 'package:custom_picker/custom_picker/helpers/truncate_text_helper.dart';
+import 'package:custom_picker/custom_picker/views/albums_view.dart';
+import 'package:custom_picker/custom_picker/widgets/image_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +18,8 @@ import 'crop_view.dart';
 class MediaView extends StatefulWidget {
   final AssetPathEntity album;
   final Function() onCancel;
-  const MediaView({super.key, required this.album, required this.onCancel});
+  final bool isFromMain;
+  MediaView({super.key, required this.album, required this.onCancel, this.isFromMain = false});
 
   @override
   State<MediaView> createState() => _MediaViewState();
@@ -42,7 +46,7 @@ class _MediaViewState extends State<MediaView> {
 
   paginationOnScrolling() async {
     _scrollController.addListener(() async {
-      if ((_scrollController.position.maxScrollExtent - 10.h) <= _scrollController.position.pixels && !customPicker.isLoadingPagintaion && !customPicker.isEnd){
+      if ((_scrollController.position.maxScrollExtent - 120.h) <= _scrollController.position.pixels && !customPicker.isLoadingPagintaion && !customPicker.isEnd){
         customPicker.isLoadingPagintaion = true;
         setState(() {});
         await customPicker.getCurrentMediaFiles(widget.album);
@@ -86,23 +90,63 @@ class _MediaViewState extends State<MediaView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if(customPicker.currentMediaFiles.isEmpty)
+                      SizedBox()
+                      // Wrap(
+                      //   spacing: 3.w,
+                      //   runSpacing: 3.h,
+                      //   children: List.generate(14, (index) 
+                      //     => Container(
+                      //       color: ColorStyles.white2,
+                      //       width: 120.w,
+                      //       height: 120.w,
+                      //     ),
+                      //   )
+                      // )
+                      else
                       Wrap(
                         spacing: 3.w,
                         runSpacing: 3.h,
-                        children: customPicker.currentMediaFilesUINT.map((e) 
-                          => GestureDetector(
-                            onTap: () => toCropView(e),
-                            child: Image.memory(
-                              e,
-                              width: 120.w,
-                              height: 120.w,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                        children: customPicker.currentMediaFiles.map((e) 
+                          => ImageCard(
+                            onTap: (file) => toCropView(file), 
+                            file: customPicker.currentMediaFiles[customPicker.currentMediaFiles.indexOf(e)]
+                          )
+                          // GestureDetector(
+                          //   onTap: () => toCropView(e),
+                          //   child: CachedMemoryImage(
+                          //     height: 120.w,
+                          //     width: 120.w,
+                          //     uniqueKey: 'app://image/${customPicker.currentMediaFilesUINT.indexOf(e)}_${widget.album.id}',
+                          //     bytes: e,
+                          //     placeholder: Container(
+                          //       color: ColorStyles.black,
+                          //       width: 120.w,
+                          //       height: 120.w,
+                          //     ),
+                          //     fit: BoxFit.cover,
+                          //   )
+                          //   // Image.memory(
+                          //   //   e,
+                          //   //   width: 120.w,
+                          //   //   height: 120.w,
+                          //   //   fit: BoxFit.cover,
+                          //   // ),
+                          // ),
                         ).toList()
                       ),
                       if(customPicker.isLoadingPagintaion)
-                      Center(child: CircularProgressIndicator())
+                      Wrap(
+                        spacing: 3.w,
+                        runSpacing: 3.h,
+                        children: List.generate(18, (index) 
+                          => Container(
+                            color: ColorStyles.white2,
+                            width: 120.w,
+                            height: 120.w,
+                          ),
+                        )
+                      )
                     ],
                   ),
                 ),
@@ -111,9 +155,21 @@ class _MediaViewState extends State<MediaView> {
 
 
             // APPBAR
-            _buildBar(context, () {
+            _buildBar(context, () async {
               // Navigator.push(context, CupertinoPageRoute(builder: (context) => AlbumsView()));
-              Navigator.pop(context);
+              if(widget.isFromMain){
+                Uint8List? cropped = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AlbumsView(
+                  onCancel: (){
+                    Navigator.pop(context);
+                    widget.onCancel();
+                  },
+                )));
+                if(cropped != null){
+                  Navigator.pop(context, cropped);
+                }
+              }else{
+                Navigator.pop(context);
+              }
             }),
 
             // BOTTOMBAR
@@ -131,7 +187,7 @@ class _MediaViewState extends State<MediaView> {
                     GestureDetector(
                       onTap: (){
                         Navigator.pop(context);
-                        widget.onCancel();
+                        // widget.onCancel();
                       },
                       behavior: HitTestBehavior.opaque,
                       child: Padding(
@@ -159,7 +215,23 @@ class _MediaViewState extends State<MediaView> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Center(child: Text(widget.album.name, style: TextStyles(context).headline2,)),
+          if(widget.album.name.trim().length <= 9)
+          Center(
+            child: Text(widget.album.name, style: TextStyles(context).headline2,),
+          )
+          else
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                // color: ColorStyles.black2,
+                width: 105.w,
+                height: 10.h,
+              ),
+              Text(truncateWithEllipsis(15-2, widget.album.name), style: TextStyles(context).headline2,),
+            ],
+          ),
           Positioned(
             left: 8.w,
             bottom: 33.h,

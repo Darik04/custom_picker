@@ -1,14 +1,17 @@
 import 'package:camera/camera.dart';
 import 'package:custom_picker/constants/colors/color_styles.dart';
+import 'package:custom_picker/custom_picker/views/crop_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 
 class CameraCard extends StatefulWidget {
-  final Function() onTap;
-  const CameraCard({super.key, required this.onTap});
+  final Function(Uint8List photo) onPhoto;
+  const CameraCard({super.key, required this.onPhoto});
 
   @override
   State<CameraCard> createState() => _CameraCardState();
@@ -36,11 +39,23 @@ class _CameraCardState extends State<CameraCard> {
   }
 
 
+  void tapByCamera() async{
+    controller = null;
+    setState(() {});
+    XFile? file = await ImagePicker().pickImage(source: ImageSource.camera);
+    if(file != null){
+      Uint8List bytesFile = await file.readAsBytes();
+      widget.onPhoto(bytesFile);
+    }
+    initCamera();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: tapByCamera,
       child: Padding(
         padding: EdgeInsets.only(right: 8.h),
         child: Stack(

@@ -10,7 +10,7 @@ class CustomPicker{
 
   //CURRENT CHOOSEN ALBUM MEDIA FILES
   List<AssetEntity> currentMediaFiles = [];
-  List<Uint8List> currentMediaFilesUINT = [];
+  // List<Uint8List> currentMediaFilesUINT = [];
 
   //RECENT MEDIA FILES
   List<AssetEntity> recentMediaFiles = [];
@@ -21,7 +21,7 @@ class CustomPicker{
   bool isLoading = true;
   bool isEnd = false;
   bool isLoadingPagintaion = false;
-  int sizePagination = 60;
+  int sizePagination = 6;
 
   ThumbnailSize quality = const ThumbnailSize(300, 300);
 
@@ -73,14 +73,14 @@ class CustomPicker{
   getCurrentMediaFiles(AssetPathEntity album) async {
     bool isAccess = await _checkPermissionDevice();
     if(isAccess){
-      List<AssetEntity> media = await album.getAssetListPaged(page: currentPage, size: sizePagination);
-      List<Uint8List> temp = [];
-      for (var asset in media) {
-        Uint8List? file = await asset.thumbnailDataWithSize(quality);
-        if(file != null){
-          temp.add(file);
-        }
-      }
+      List<AssetEntity> media = await album.getAssetListPaged(page: currentPage, size: currentPage == 0 ? 18 : sizePagination);
+      // List<Uint8List> temp = [];
+      // for (var asset in media) {
+      //   Uint8List? file = await asset.thumbnailDataWithSize(quality);
+      //   if(file != null){
+      //     temp.add(file);
+      //   }
+      // }
 
       //PAGINATION END
       if(media.length < sizePagination){
@@ -89,7 +89,7 @@ class CustomPicker{
 
       isLoading = false;
       isLoadingPagintaion = false;
-      currentMediaFilesUINT.addAll(temp);
+      // currentMediaFilesUINT.addAll(temp);
       currentMediaFiles.addAll(media);
       currentPage++;
     }

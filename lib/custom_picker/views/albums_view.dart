@@ -68,7 +68,14 @@ class _AlbumsViewState extends State<AlbumsView> {
               child: SingleChildScrollView(
                 child: Container(
                   margin: EdgeInsets.all(25.w),
-                  child: Column(
+                  child: customPicker.albums.isEmpty 
+                  ? SizedBox(
+                    height: MediaQuery.of(context).size.height - 200.h,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                  : Column(
                     children: customPicker.albums.map((e) 
                       => _buildAlbumItem(
                         album: e, 
@@ -100,7 +107,6 @@ class _AlbumsViewState extends State<AlbumsView> {
                     GestureDetector(
                       onTap: (){
                         Navigator.pop(context);
-                        widget.onCancel();
                       },
                       behavior: HitTestBehavior.opaque,
                       child: Padding(

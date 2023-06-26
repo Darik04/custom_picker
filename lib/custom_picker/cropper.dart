@@ -128,7 +128,7 @@ class _CropperState extends State<Cropper> {
                     return InteractiveViewer(
                       clipBehavior: Clip.none,
                       transformationController: _transformationController,
-                      constrained: false,
+                      constrained: true,
                       child: Builder(
                         builder: (context) {
                           final imageStream = widget.image.image.resolve(
@@ -154,7 +154,7 @@ class _CropperState extends State<Cropper> {
                           );
                         },
                       ),
-                      minScale: 0.1,
+                      minScale: 0.8,
                       maxScale: widget.zoomScale,
                       onInteractionStart: widget.onScaleStart,
                       onInteractionUpdate: widget.onScaleUpdate,
@@ -242,7 +242,7 @@ class _CropperState extends State<Cropper> {
       final childSize = renderBox?.size ?? Size.zero;
       if (childSize != Size.zero) {
         final coverRatio = _getCoverRatio(parentSize, childSize);
-        final value = Matrix4.identity() * coverRatio;
+        final value = Matrix4.identity() * (coverRatio);
 
         // Center the image inside the InteractiveViewer
         value.translate(
